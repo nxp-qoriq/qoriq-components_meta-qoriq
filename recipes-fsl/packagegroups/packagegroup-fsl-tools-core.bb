@@ -90,7 +90,6 @@ PKGS ?= " \
     optee-client-qoriq \
     optee-test-qoriq \
     restool \
-    spc \
     tsntool \
 "
 PKGS:ls1012a = " \
