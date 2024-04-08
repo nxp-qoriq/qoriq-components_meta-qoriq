@@ -17,6 +17,7 @@ IMAGE_INSTALL:append = " \
     parted \
     lmsensors-sensors \
     restool \
+    fmc \
     sudo \ 
     curl \
 "

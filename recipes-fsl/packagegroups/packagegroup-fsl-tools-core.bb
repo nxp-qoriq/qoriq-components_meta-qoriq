@@ -105,12 +105,15 @@ RDEPENDS:${PN}:append:qoriq-arm64 = "${PKGS}"
 
 RDEPENDS:${PN}:append:qoriq-ppc = " \
     eth-config \
+    fmc \
 "
 RDEPENDS:${PN}:append:ls1043a = " \
     eth-config \
+    fmc \
 "
 RDEPENDS:${PN}:append:ls1046a = " \
     eth-config \
+    fmc \
 "
 RDEPENDS:${PN}:append:ls1088a = " \
     aiopsl \
