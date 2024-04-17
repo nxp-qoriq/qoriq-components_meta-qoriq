@@ -1,4 +1,4 @@
-# Copyright 2023 NXP
+# Copyright 2023-2024 NXP
 require optee-os-qoriq.inc
 
 SUMMARY = "OP-TEE Trusted OS TA devkit"
@@ -7,7 +7,7 @@ HOMEPAGE = "https://www.op-tee.org/"
 
 DEPENDS += "python3-pycryptodome-native"
 
-OPTEE_OS_BRANCH = "lf-6.6.3_1.0.0"
+OPTEE_OS_BRANCH = "lf_4.2.y"
 SRCREV = "${AUTOREV}"
 
 PV:append = "+git${SRCPV}"
