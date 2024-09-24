@@ -360,7 +360,7 @@ Origin:                      NXP (proprietary)
 Package:                     qoriq-mc-binary
 Version:                     10.39.0
 Outgoing License:            LA_OPT_BINARY_FIRMWARE_ONLY
-License File:                NXP-Binary-EULA.txt
+License File:                LICENSE
 Package Category:            firmware
 Type of Content:             binary
 Description and comments:    DPAA2 Management Complex Firmware
