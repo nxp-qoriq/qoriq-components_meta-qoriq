@@ -40,6 +40,9 @@ SECURE_EXTENTION ?= "${@bb.utils.contains('DISTRO_FEATURES', 'secure', '_sec', '
 
 BOOTTYPE ?= "nor nand qspi flexspi_nor sd emmc"
 
+# Change to "1" to create a DEBUG build
+DEBUGBUILD = "0"
+
 chassistype ?= "ls2088_1088"
 chassistype:ls1012a = "ls104x_1012"
 chassistype:ls1043a = "ls104x_1012"
@@ -82,6 +85,12 @@ python() {
 do_configure[noexec] = "1"
 
 do_compile() {
+    if [ ${DEBUGBUILD} = "1" ]; then
+       build_target="debug"
+    else
+       build_target="release"
+    fi
+
     if [ ! -f ${RECIPE_SYSROOT_NATIVE}/usr/bin/cst/srk.pri ]; then
        ${RECIPE_SYSROOT_NATIVE}/usr/bin/cst/gen_keys 1024
     else
@@ -126,39 +135,39 @@ do_compile() {
 	if [ -f ${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/$rcwimg ]; then
             make V=1 realclean
             if [ -f rot_key.pem ];then
-                mkdir -p build/${PLATFORM}/release/
-                cp *.pem build/${PLATFORM}/release/
+                mkdir -p build/${PLATFORM}/${build_target}/
+                cp *.pem build/${PLATFORM}/${build_target}/
             fi
 
-            oe_runmake V=1 all fip pbl ${FIP_DDR} PLAT=${PLATFORM} BOOT_MODE=${d} RCW=${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/${rcwimg} BL33=${UBOOT_BINARY}
-            cp build/${PLATFORM}/release/bl2_${d}${SECURE_EXTENTION}.pbl .
-            cp build/${PLATFORM}/release/fip.bin fip_uboot${SECURE_EXTENTION}.bin
-            if [ -e build/${PLATFORM}/release/fuse_fip.bin ]; then
-                cp build/${PLATFORM}/release/fuse_fip.bin .
+            oe_runmake V=1 all fip pbl ${FIP_DDR} DEBUG=${DEBUGBUILD} PLAT=${PLATFORM} BOOT_MODE=${d} RCW=${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/${rcwimg} BL33=${UBOOT_BINARY}
+            cp build/${PLATFORM}/${build_target}/bl2_${d}${SECURE_EXTENTION}.pbl .
+            cp build/${PLATFORM}/${build_target}/fip.bin fip_uboot${SECURE_EXTENTION}.bin
+            if [ -e build/${PLATFORM}/${build_target}/fuse_fip.bin ]; then
+                cp build/${PLATFORM}/${build_target}/fuse_fip.bin .
             fi
 
-            if [ -e build/${PLATFORM}/release/ddr_fip_sec.bin ] && [ ! -f ddr_fip_sec.bin ]; then
-                cp build/${PLATFORM}/release/ddr_fip_sec.bin .
+            if [ -e build/${PLATFORM}/${build_target}/ddr_fip_sec.bin ] && [ ! -f ddr_fip_sec.bin ]; then
+                cp build/${PLATFORM}/${build_target}/ddr_fip_sec.bin .
             fi
 
-            if [ -e build/${PLATFORM}/release/rot_key.pem ] && [ ! -f rot_key.pem ]; then
-                cp build/${PLATFORM}/release/*.pem .
+            if [ -e build/${PLATFORM}/${build_target}/rot_key.pem ] && [ ! -f rot_key.pem ]; then
+                cp build/${PLATFORM}/${build_target}/*.pem .
             fi
 
             if [ -n "${PLATFORM_ADDITIONAL_TARGET}" ]; then
                 make V=1 realclean
-                oe_runmake V=1 all fip pbl PLAT=${PLATFORM_ADDITIONAL_TARGET} BOOT_MODE=${d} RCW=${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/${rcwimg} BL33=${UBOOT_BINARY}
-                cp build/${PLATFORM_ADDITIONAL_TARGET}/release/bl2_${d}${SECURE_EXTENTION}.pbl bl2_${d}${SECURE_EXTENTION}_${PLATFORM_ADDITIONAL_TARGET}.pbl
-                cp build/${PLATFORM_ADDITIONAL_TARGET}/release/fip.bin fip_uboot${SECURE_EXTENTION}_${PLATFORM_ADDITIONAL_TARGET}.bin
-                if [ -e build/${PLATFORM_ADDITIONAL_TARGET}/release/fuse_fip.bin ]; then
-                    cp build/${PLATFORM_ADDITIONAL_TARGET}/release/fuse_fip.bin fuse_fip_${PLATFORM_ADDITIONAL_TARGET}.bin
+                oe_runmake V=1 all fip pbl DEBUG=${DEBUGBUILD} PLAT=${PLATFORM_ADDITIONAL_TARGET} BOOT_MODE=${d} RCW=${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/${rcwimg} BL33=${UBOOT_BINARY}
+                cp build/${PLATFORM_ADDITIONAL_TARGET}/${build_target}/bl2_${d}${SECURE_EXTENTION}.pbl bl2_${d}${SECURE_EXTENTION}_${PLATFORM_ADDITIONAL_TARGET}.pbl
+                cp build/${PLATFORM_ADDITIONAL_TARGET}/${build_target}/fip.bin fip_uboot${SECURE_EXTENTION}_${PLATFORM_ADDITIONAL_TARGET}.bin
+                if [ -e build/${PLATFORM_ADDITIONAL_TARGET}/${build_target}/fuse_fip.bin ]; then
+                    cp build/${PLATFORM_ADDITIONAL_TARGET}/${build_target}/fuse_fip.bin fuse_fip_${PLATFORM_ADDITIONAL_TARGET}.bin
                 fi
             fi
 
             if [ -z "${SECURE_EXTENTION}" -a -f "${DEPLOY_DIR_IMAGE}/uefi/${PLATFORM}/${uefiboot}" ]; then
                 make V=1 realclean
-                oe_runmake V=1 all fip pbl PLAT=${PLATFORM} BOOT_MODE=${d} RCW=${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/${rcwimg} BL33=${DEPLOY_DIR_IMAGE}/uefi/${PLATFORM}/${uefiboot}
-                cp build/${PLATFORM}/release/fip.bin fip_uefi.bin
+                oe_runmake V=1 all fip pbl DEBUG=${DEBUGBUILD} PLAT=${PLATFORM} BOOT_MODE=${d} RCW=${DEPLOY_DIR_IMAGE}/rcw/${RCW_FOLDER}/${rcwimg} BL33=${DEPLOY_DIR_IMAGE}/uefi/${PLATFORM}/${uefiboot}
+                cp build/${PLATFORM}/${build_target}/fip.bin fip_uefi.bin
             fi
         fi
         rcwimg=""
