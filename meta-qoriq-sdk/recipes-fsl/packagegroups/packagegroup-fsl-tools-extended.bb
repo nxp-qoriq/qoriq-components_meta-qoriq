@@ -90,7 +90,6 @@ RDEPENDS:${PN}:append:ls1012a = "\
     ceetm \
     dce \
     dpdk \
-    dpdk-tools \
     keyctl-caam \
     optee-os-qoriq \
     optee-client-qoriq \
