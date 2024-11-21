@@ -19,7 +19,7 @@ PV:append = "+${SRCPV}"
 UBOOT_BRANCH ?= "lf_v2024.04"
 UBOOT_SRC ?= "git://github.com/nxp-qoriq/u-boot.git;protocol=https"
 SRC_URI = "${UBOOT_SRC};branch=${UBOOT_BRANCH}"
-SRCREV = "${AUTOREV}"
+SRCREV = "6c4545203d123c246c5d7995f2893959506d28e0"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
