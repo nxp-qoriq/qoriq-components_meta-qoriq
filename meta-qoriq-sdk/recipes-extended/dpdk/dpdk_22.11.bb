@@ -19,9 +19,12 @@ inherit meson pkgconfig
 PACKAGECONFIG ??= "openssl examples"
 
 PACKAGECONFIG[afxdp] = ",,libbpf"
-PACKAGECONFIG[examples] = "-Denable_examples_bin_install=true -Dexamples=all,-Denable_examples_bin_install=false"
+PACKAGECONFIG[examples] = "-Denable_examples_bin_install=true -Dexamples=${DPDK_EXAMPLES},-Denable_examples_bin_install=false"
 PACKAGECONFIG[libvirt] = ",,libvirt"
 PACKAGECONFIG[openssl] = ",,openssl"
+
+DPDK_EXAMPLES ?= "l2fwd,l3fwd,l2fwd-crypto,ipsec-secgw"
+DPDK_APPS ?= "pdump,test-pmd"
 
 # kernel module is provide by dpdk-module recipe, so disable here
 EXTRA_OEMESON = " \
@@ -32,11 +35,14 @@ EXTRA_OEMESON = " \
         ${@bb.utils.contains('DISTRO_FEATURES', 'vpp', '-Dc_args="-Ofast -fPIC -ftls-model=local-dynamic"', '', d)} \
         -Denable_examples_source_install=false \
         -Ddrivers_install_subdir= \
+        -Denable_apps=${DPDK_APPS} \
 "
 
 do_install:append(){
     install -d ${D}/${sysconfdir}/dpdk
     cp -rf ${S}/nxp/* ${D}/${sysconfdir}/dpdk
+    rm -f ${D}/${bindir}/dpdk-test
+    rm -f ${D}/${bindir}/dpdk-*.py
 }
 
 RDEPENDS:${PN} += "bash pciutils python3-core python3-pyelftools"
