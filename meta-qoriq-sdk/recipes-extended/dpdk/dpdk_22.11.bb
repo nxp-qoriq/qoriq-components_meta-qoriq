@@ -34,6 +34,11 @@ EXTRA_OEMESON = " \
         -Ddrivers_install_subdir= \
 "
 
+do_install:append(){
+    install -d ${D}/${sysconfdir}/dpdk
+    cp -rf ${S}/nxp/* ${D}/${sysconfdir}/dpdk
+}
+
 RDEPENDS:${PN} += "bash pciutils python3-core python3-pyelftools"
 
 COMPATIBLE_MACHINE = "(qoriq-arm64)"
